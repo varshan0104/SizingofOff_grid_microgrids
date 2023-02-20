@@ -12,3 +12,7 @@ import matplotlib.pyplot as plt
 
 import os
 import prosumpy as pros
+
+
+import importproductdata.py
+

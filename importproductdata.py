@@ -18,3 +18,13 @@ def read_input_data(file_path):
     return [pv1, pv2, pv3], [bat1, bat2, bat3]
 
 
+if __name__ == '__main__':
+    # Define the path to the input Excel file
+    file_path = 'path/to/your/excel/file.xlsx'
+
+    # Call the read_input_data function to read the data from the file
+    pv_data, bat_data = read_input_data(file_path)
+
+    # Do something with the data, e.g. print it to the console
+    print("PV panel data:", pv_data)
+    print("Battery data:", bat_data)
