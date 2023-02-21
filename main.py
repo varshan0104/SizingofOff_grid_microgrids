@@ -13,13 +13,14 @@ import matplotlib.pyplot as plt
 #imports all functions from importproductdata.py
 from importproductdata import *
 
-ProductData = read_input_data('productdata.xlsx')
+PVData = read_pv_data('productdata.xlsx')
+BatteryData = read_battery_data('productdata.xlsx')
 
-print("Dette er fra main:")
-print(ProductData)
-print(ProductData[1])
-print(ProductData[1][1])
-print(ProductData[1][1][2])
+print("Dette er PV:")
+print(PVData)
+
+print("Dette er batteri :")
+print(BatteryData)
 
 from analysis import *
 
