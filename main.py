@@ -10,9 +10,16 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-import os
-import prosumpy as pros
+#imports all functions from importproductdata.py
+from importproductdata import *
 
+ProductData = read_input_data('productdata.xlsx')
 
-import importproductdata.py
+print("Dette er fra main:")
+print(ProductData)
+print(ProductData[1])
+print(ProductData[1][1])
+print(ProductData[1][1][2])
+
+from analysis import *
 
