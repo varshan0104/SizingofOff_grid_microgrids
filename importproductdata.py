@@ -1,4 +1,6 @@
 import pandas as pd
+import pytz
+from pvlib.location import Location
 
 def read_pv_data(file_path):
     # Read the Excel file
@@ -21,3 +23,19 @@ def read_battery_data(file_path):
     # Return the PV panel and battery data as lists
     return [bat1, bat2, bat3]
 
+def read_location_data(file_path):
+    df = pd.read_excel(file_path, sheet_name='Location')
+
+    # extract individual values from DataFrame and assign to variables
+
+    latitude = df.loc[0, 'latitude']
+    longitude = df.loc[0, 'longtitude']
+    tz_name = df.loc[0, 'timezone'].strip()  # remove leading/trailing whitespace
+    altitude = df.loc[0, 'altitude']
+
+    # convert time zone name to pytz time zone object
+    tz = pytz.timezone(tz_name)
+
+    location = Location(latitude, longitude, tz, altitude)
+
+    return location

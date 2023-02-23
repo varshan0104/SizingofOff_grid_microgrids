@@ -15,6 +15,7 @@ from importproductdata import *
 
 PVData = read_pv_data('productdata.xlsx')
 BatteryData = read_battery_data('productdata.xlsx')
+LocationData = read_location_data('Locationandload_data.xlsx')
 
 print("Dette er PV:")
 print(PVData)
@@ -22,5 +23,8 @@ print(PVData)
 print("Dette er batteri :")
 print(BatteryData)
 
-from analysis import *
+print("Dette er lokasjonsdata:")
+print(LocationData)
+
+
 
