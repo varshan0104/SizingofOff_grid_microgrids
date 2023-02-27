@@ -2,6 +2,7 @@ import pandas as pd
 import pytz
 from pvlib.location import Location
 
+'''
 def read_pv_data(file_path):
     # Read the Excel file
     data_pv = pd.read_excel(file_path, sheet_name='PV')
@@ -12,6 +13,23 @@ def read_pv_data(file_path):
     pv3 = list(data_pv['PV3'])
 
     return [pv1, pv2, pv3]
+'''
+
+
+def read_pv_data(file_path):
+    # Read the Excel file and extract the PV panel data and technical parameters
+    data_pv = pd.read_excel(file_path, sheet_name='PV')
+    technical_data = data_pv.loc[:, 'Enhet'].to_dict()
+
+    # Initialize a dictionary to store the data for each PV panel
+    pv_data = {}
+
+    # Loop through the columns of the data to extract the values for each PV panel
+    for col in data_pv.columns[1:]:
+        panel_data = data_pv.loc[:, col].to_list()
+        pv_data[col] = panel_data
+
+    return technical_data, pv_data
 
 def read_battery_data(file_path):
     data_battery = pd.read_excel(file_path, sheet_name='Battery')
