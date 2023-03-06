@@ -10,10 +10,10 @@ end = '2019-12-31 23:00:00'
 #https://re.jrc.ec.europa.eu/pvg_tools/en/tools.html#PVP
 
 # read in data from PVGIS global horizontal irradiance file
-global_2020 = pd.read_csv('InputFiles/pvgis_global2020.csv', skiprows=8, nrows=8760, index_col=0)
+global_2020 = pd.read_csv('pvgis_global2020.csv', skiprows=8, nrows=8760, index_col=0)
 
 # read in data from PVGIS direct and diffuse irradiance components file
-components = pd.read_csv('InputFiles/pvgis_components2019.csv', skiprows=8, nrows=8760, index_col=0)
+components = pd.read_csv('pvgis_components2019.csv', skiprows=8, nrows=8760, index_col=0)
 
 # create a blank dataframe to hold processed POA data
 poa_data = pd.DataFrame(columns=['poa_global', 'poa_direct', 'poa_diffuse', 'temp_air', 'wind_speed'], index=global_2020.index)
