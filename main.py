@@ -3,6 +3,8 @@ Part of masterthesis; Optimal sizing of offgrid microgrids.
 @author: Varshan Erik Shankar
 
 GridVille NTNU
+
+Varshan som tester multicommitting
 """
 
 #All relevant packages
