@@ -5,6 +5,8 @@ Part of masterthesis; Optimal sizing of offgrid microgrids.
 GridVille NTNU
 
 multicommit suksessfull
+
+en siste test for bekreftelse av kodetransfer
 """
 
 #All relevant packages
