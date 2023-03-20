@@ -1,6 +1,23 @@
-from importproductdata import *
 import pandas as pd
 import pvlib
+from importproductdata import *
+PVData = read_pv_data('productdata.xlsx')
+LocationData = read_location_data('Locationandload_data.xlsx')
+import matplotlib
+matplotlib.use('Agg')
+
+import matplotlib.pyplot as plt
+
+
+p_max = PVData[1]['PV1'][0]                        #[W]
+v_oc = PVData[1]['PV1'][1]                       #[V]
+i_sc = PVData[1]['PV1'][2]                       #[A]
+alpha_sc = PVData[1]['PV1'][3]
+beta_voc = PVData[1]['PV1'][4]
+gamma_pmp = PVData[1]['PV1'][5]
+temp_ref = PVData[1]['PV1'][6]
+surface_tilt = PVData[1]['PV1'][7]
+surface_azimuth = PVData[1]['PV1'][8]
 
 # set start and end dates for the simulation
 start = '2019-01-01 00:00:00'
@@ -13,7 +30,7 @@ end = '2019-12-31 23:00:00'
 global_2020 = pd.read_csv('pvgis_global2020.csv', skiprows=8, nrows=8760, index_col=0)
 
 # read in data from PVGIS direct and diffuse irradiance components file
-components = pd.read_csv('pvgis_components2019.csv', skiprows=8, nrows=8760, index_col=0)
+components = pd.read_csv('pvgis_components2020.csv', skiprows=8, nrows=8760, index_col=0)
 
 # create a blank dataframe to hold processed POA data
 poa_data = pd.DataFrame(columns=['poa_global', 'poa_direct', 'poa_diffuse', 'temp_air', 'wind_speed'], index=global_2020.index)
@@ -40,7 +57,7 @@ result_dc = pvlib.pvsystem.pvwatts_dc(poa_data['poa_global'], temp_cell, p_max, 
 ''' Modify the data to fit the timezone of the location '''
 
 # shift index to match local timezone
-result_dc.index = result_dc.index + pd.DateOffset(hours=timezone_offset)
+result_dc.index = result_dc.index + pd.DateOffset(hours=3) # Endre tallet her til timezoneoffset
 
 # drop the last 3 rows to remove any partial hours
 result_dc.drop(result_dc.tail(3).index, inplace=True)

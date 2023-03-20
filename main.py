@@ -4,7 +4,7 @@ Part of masterthesis; Optimal sizing of offgrid microgrids.
 
 GridVille NTNU
 
-Varshan som tester multicommitting
+multicommit suksessfull
 """
 
 #All relevant packages
