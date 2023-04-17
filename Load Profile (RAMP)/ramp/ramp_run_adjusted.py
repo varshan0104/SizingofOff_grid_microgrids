@@ -1,24 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Apr 19 14:35:00 2019
 This is the code for the open-source stochastic model for the generation of 
 multi-energy load profiles in off-grid areas, called RAMP, v0.3.0.
 
-@authors:
+This code is inspired by the creators of RAMP:
 - Francesco Lombardi, Politecnico di Milano
 - Sergio Balderrama, Université de Liège
 - Sylvain Quoilin, KU Leuven
 - Emanuela Colombo, Politecnico di Milano
-
-Copyright 2019 RAMP, contributors listed above.
-Licensed under the European Union Public Licence (EUPL), Version 1.2;
-you may not use this file except in compliance with the License.
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and limitations
-under the License.
 """
 
 #%% Import required modules
@@ -57,7 +46,7 @@ The following values input_files_to_run will establish a complete load profile f
 The aggregated load profile will summarize the days in the same order as defined in this list (i.e. pay attention
 to the order that the input files are defined in).
 """
-input_files_to_run = [1,2,3,4,5,6,7,8,9,10,11]
+input_files_to_run = [1,2,3,4]
 
 """To illustrate, the following input_files_to_run would establish load profiles for inputfile 1,6 and 4, 
 in that order. The result would be a single load profiles consisting of all minute-based daily load profiles
@@ -69,18 +58,6 @@ input_files_to_run = [1,6,4]
 The following gives a summary of what the input_files represent. This is in line with the seasons that have 
 been defined in the master thesis. 
 
-Input_file_1: Hot season; January, 31 days (regular school, high visitor activity)
-Input_file_2: Hot season; 1.-7.February, 7 days (mid-term vacation, high visitor activity)
-Input_file_3: Hot season; 8.February-31.march , 52 days (regular school, high visitor activity)
-Input_file_4: Hot season; April, 30 days (vacation, high visitor activity)
-Input_file_5: Warm season; May, 31 days (regular school, low visitor activity)
-Input_file_6: Cold season; June, July, 61 days (regular school, low visitor activity)
-Input_file_7: Cold season; August, 31 days (vacation, low visitor activity)
-Input_file_8: Warm season; 1.-23.September, 24 days (regular school, low visitor activity)
-Input_file_9: Warm season; 24.september - 31.october, 37 days (regular school, high visitor activity)
-Input_file_10: Hot season; 1-15. november, 15 days (regular school, high visitor activity)
-Input_file_11: Vacation, hot season; 16.november-31.december, 46 days (vacation, high visitor activity)
-
 num_models_dict is a dictionary that has been established so that the number of daily load profiles that are to 
 be constructed for each input file can be defined.
 """
@@ -88,17 +65,12 @@ be constructed for each input file can be defined.
 #define how many days a load profile for each input file will have
 
 num_models_list_dict = {}
-num_models_list_dict["1"] = 31
-num_models_list_dict["2"] = 7
-num_models_list_dict["3"] = 52
-num_models_list_dict["4"] = 30
-num_models_list_dict["5"] = 31
-num_models_list_dict["6"] = 61
-num_models_list_dict["7"] = 31
-num_models_list_dict["8"] = 24
-num_models_list_dict["9"] = 37
-num_models_list_dict["10"] = 15
-num_models_list_dict["11"] = 46
+num_models_list_dict["1"] = 91
+num_models_list_dict["2"] = 91
+num_models_list_dict["3"] = 92
+num_models_list_dict["4"] = 91
+
+
 
 
 tot_number_of_days = 0
