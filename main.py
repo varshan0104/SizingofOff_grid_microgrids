@@ -35,9 +35,9 @@ print(LocationData)
 from analysis import *
 
 # read in the input data
-technical_data, pv_data = read_pv_data(pv_file_path)
-bat_data = read_battery_data(battery_file_path)
-location = read_location_data(location_file_path)
+technical_data, pv_data = read_pv_data('productdata.xlsx')
+bat_data = read_battery_data('productdata.xlsx')
+location = read_location_data('Locationandload_data.xlsx')
 
 # run the analysis code
 run_analysis(technical_data, pv_data, bat_data, location)
