@@ -24,7 +24,10 @@ class User():
 
 #Define the inner class for modelling user's appliances within the correspoding user class
     class Appliance():
-    
+        def __init__(self, user, number, P, num_windows, func_time, r_t, func_cycle, fixed, fixed_cycle, occasional_use,
+                     flat, thermal_P_var, pref_index, wd_we_type, year_min, initial_share):
+            print("Appliance constructor in core.py called")
+
         def __init__(self,user, n = 1, P = 0, w = 1, t = 0, r_t = 0, c = 1, fixed = 'no', fixed_cycle = 0, occasional_use = 1, flat = 'no', thermal_P_var = 0, pref_index = 0, wd_we_type = 2, P_series = False):
             self.user = user #user to which the appliance is bounded
             self.number = n #number of appliances of the specified kind
