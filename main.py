@@ -40,6 +40,14 @@ if not os.path.exists('results'):
 
 load_profile()
 
+import threading
+
+if threading.current_thread() is threading.main_thread():
+    print("This is the main thread.")
+else:
+    print("This is not the main thread.")
+
+
 '''
 from analysis import *
 
