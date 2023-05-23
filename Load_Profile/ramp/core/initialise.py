@@ -49,14 +49,15 @@ class Appliance:
         self.initial_share = initial_share
 
     def windows(self, time_window_params, r_w):
-        # Define this method based on your requirements
-        pass
+        self.time_window_params = time_window_params
+        self.r_w = r_w
 
 
 
 def user_defined_inputs(j):
     # Read the Excel file
     df = pd.read_excel('Load_Profile/ramp/core/Appliances_and_users.xlsx', sheet_name=1)  # Leser første ark (indeks 0)
+    print(df.columns)
 
     # Initialize an empty list to hold all users
     all_users = []
@@ -81,11 +82,26 @@ def user_defined_inputs(j):
                     # Add the appliance to this user
                     user.App_list.append(appliance)
 
-        # Parse the time_window string to get the parameters for the .windows() function
-        time_window_str = row['time_window']
+        # Split the string at the comma before 'r_w'
+        time_window_str, r_w_str = time_window_str.split(', r_w')
+
+        # Remove the brackets and split the string
         time_window_params = time_window_str.strip('[]').split(',')
-        time_window_params = [int(param.strip()) for param in time_window_params]
-        r_w = float(time_window_str.split('=')[1])
+
+        # Convert each part to an integer
+        time_window_params = [int(param.strip()) for param in time_window_params if param.strip().isdigit()]
+
+        # Check if the 'time_window' column is not NaN (i.e., there is a time window for this row)
+        if pd.notna(row['time_window']):
+            # Parse the time_window string to get the parameters for the .windows() function
+            time_window_str = row['time_window']
+            if ', r_w' in time_window_str:
+                time_window_str, r_w_str = time_window_str.split(', r_w')
+                r_w = float(r_w_str.split('=')[1])
+            else:
+                r_w = None  # or some default value
+            time_window_params = time_window_str.strip('[]').split(',')
+            time_window_params = [int(param.strip()) for param in time_window_params if param.strip().isdigit()]
 
         # Call the .windows() function on the appliance
         appliance.windows(time_window_params, r_w=r_w)
@@ -120,9 +136,11 @@ def Initialise_model():
     
 def Initialise_inputs(j):
     Year_behaviour = yearly_pattern()
-    user_defined_inputs(j)
+    #user_defined_inputs(j)
+    #user_list = user_defined_inputs(j)
+
     user_list = user_defined_inputs(j)
-    
+
     # Calibration parameters
     '''
     Calibration parameters. These can be changed in case the user has some real data against which the model can be calibrated
