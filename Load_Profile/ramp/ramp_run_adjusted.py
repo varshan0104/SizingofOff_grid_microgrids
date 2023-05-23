@@ -48,6 +48,8 @@ def load_profile():
     The aggregated load profile will summarize the days in the same order as defined in this list (i.e. pay attention
     to the order that the input files are defined in).
     """
+
+    #Profiles_list, User_list = Stochastic_Process(j, num_models)
     input_files_to_run = [1,2,3,4]
 
     """To illustrate, the following input_files_to_run would establish load profiles for inputfile 1,6 and 4, 

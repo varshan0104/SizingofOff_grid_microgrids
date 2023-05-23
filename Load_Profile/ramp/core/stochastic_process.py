@@ -296,4 +296,4 @@ def Stochastic_Process(j,num_profiles):
             Tot_Classes = Tot_Classes + Us.load #adds the User load to the total load of all User classes
         Profile.append(Tot_Classes) #appends the total load to the list that will contain all the generated profiles
         print('Profile',prof_i+1,'/',num_profiles,'completed') #screen update about progress of computation
-    return(Profile)
+    return(Profile_list, User_list)
