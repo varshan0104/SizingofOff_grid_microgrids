@@ -58,7 +58,7 @@ def Profile_series_plot(stoch_profiles_series):
 
     plt.xlabel('Time [minutes]')
     plt.ylabel('Power consumption [W]')
-    plt.ylim(ymin=0, ymax=6000)
+    plt.ylim(ymin=0, ymax=10000)
     # plt.ylim(ymax=5000)
     plt.margins(x=0)
     plt.margins(y=0)

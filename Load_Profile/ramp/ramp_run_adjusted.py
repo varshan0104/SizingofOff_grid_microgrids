@@ -56,9 +56,9 @@ The following values input_files_to_run will establish a complete load profile f
 The aggregated load profile will summarize the days in the same order as defined in this list (i.e. pay attention
 to the order that the input files are defined in).
 """
-def load_profil():
+def load_profile():
 
-    input_files_to_run = [2]
+    input_files_to_run = [1]
 
 
     #define how many days a load profile for each input file will have

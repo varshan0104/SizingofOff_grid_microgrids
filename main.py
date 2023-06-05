@@ -16,22 +16,23 @@ import matplotlib.pyplot as plt
 
 #imports all functions from importproductdata.py
 from importproductdata import *
-from Load_Profile.ramp.ramp_run_adjusted import
+from Load_Profile.ramp.ramp_run_adjusted import load_profile
+
 
 PVData = read_pv_data('productdata.xlsx')
 BatteryData = read_battery_data('productdata.xlsx')
 LocationData = read_location_data('Locationandload_data.xlsx')
 
-print("Dette er PV:")
-print(PVData)
+#print("Dette er PV:")
+#print(PVData)
 
-print(PVData[1]['PV2'][4])
+#print(PVData[1]['PV2'][4])
 
-print("Dette er batteri :")
-print(BatteryData)
+#print("Dette er batteri :")
+#print(BatteryData)
 
-print("Dette er lokasjonsdata:")
-print(LocationData)
+#print("Dette er lokasjonsdata:")
+#print(LocationData)
 
 import os
 
