@@ -6,47 +6,37 @@ Input data definition
 '''
 
 import pandas as pd
+import numpy as np
 from Load_Profile.ramp.core.core import User
-
-from Load_Profile.ramp.core.core import User
-
 
 User_list = []
 
-"""------------- BASE LOAD STAFF COURT -------------"""
+# Read the Excel file
+df = pd.read_excel('Load_Profile/ramp/input_files/Appliances_and_users.xlsx', sheet_name='Appliances')
 
-"""-------------Hot season; January, 31 days (regular school, high visitor activity)-------------"""
+# Group the data by user
+grouped = df.groupby('user')
 
-#Staff Court
-SC = User("Staff Court",1,3)
-User_list.append(SC)
+# Iterate over the groups
+for user_name, group in grouped:
+    # Create User object
+    user = User(user_name, group['n_users'].iloc[0], group['us_pref'].iloc[0])
+
+    # Iterate over the rows of the group
 
 
+    # Add User object to User_list
+    User_list.append(user)
 
+    print(User_list)
 
+for index, row in group.iterrows():
+        # Convert 'P' column to DataFrame
+        P_df = pd.DataFrame([row['P']])
 
-"""-------- LIGHTNING --------"""
-
-Indoor_LED_SC_DAY_wd = SC.Appliance(SC,12,9,1,1*60,0,1*60, wd_we_type = 0)
-#time window: 06:00-07:00
-Indoor_LED_SC_DAY_wd.windows([6*60,7*60])
-
-Indoor_LED_SC_DAY_we = SC.Appliance(SC,6,9,1,1*60,0,1*60, wd_we_type = 1)
-#time window: 06:00-07:00
-Indoor_LED_SC_DAY_we.windows([6*60,7*60])
-
-Indoor_LED_SC_NIGHT_wd = SC.Appliance(SC,12,9,1,5*60,0,5*60, wd_we_type = 0)
-#time window: 18:00-23:59
-Indoor_LED_SC_NIGHT_wd.windows([18*60,23*60+59])
-
-Indoor_LED_SC_NIGHT_we = SC.Appliance(SC,6,9,1,5*60,0,5*60, wd_we_type = 0)
-#time window: 18:00-23:59
-Indoor_LED_SC_NIGHT_we.windows([18*60,23*60+59])
-
-Outdoor_LED_SC_DAY = SC.Appliance(SC,6,9,1,1*60,0,1*60)
-#time window: 06:00-07:00
-Outdoor_LED_SC_DAY.windows([6*60,7*60])
-
-Outdoor_LED_SC_NIGHT = SC.Appliance(SC,6,9,1,5*60,0,5*60)
-#time window: 18:00-23:59
-Outdoor_LED_SC_NIGHT.windows([18*60,23*60+59])
+        # Create Appliance object and add to User's App_list
+        appliance = user.Appliance(row['number'], P_df, row['num_windows'], row['func_time'], row['r_t'],
+                                   row['func_cycle'], row['fixed'], row['fixed_cycle'], row['occasional_use'],
+                                   row['flat'], row['thermal_P_var'], row['pref_index'], row['wd_we_type'],
+                                   row['year_min'], row['initial_share'])
+        user.App_list.append(appliance)

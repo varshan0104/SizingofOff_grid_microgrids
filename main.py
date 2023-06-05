@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 #imports all functions from importproductdata.py
 from importproductdata import *
-from Load_Profile.ramp.ramp_run_adjusted import *
+from Load_Profile.ramp.ramp_run_adjusted import
 
 PVData = read_pv_data('productdata.xlsx')
 BatteryData = read_battery_data('productdata.xlsx')
