@@ -58,16 +58,16 @@ to the order that the input files are defined in).
 """
 def load_profile():
 
-    input_files_to_run = [1]
+    input_files_to_run = [1,2,3,4]
 
 
     #define how many days a load profile for each input file will have
 
     num_models_list_dict = {}
-    num_models_list_dict["1"] = 2
-    num_models_list_dict["2"] = 2
-    num_models_list_dict["3"] = 2
-    num_models_list_dict["4"] = 2
+    num_models_list_dict["1"] = 90
+    num_models_list_dict["2"] = 91
+    num_models_list_dict["3"] = 92
+    num_models_list_dict["4"] = 92
 
     tot_number_of_days = 0
 

@@ -91,7 +91,6 @@ def appliance_iterate(df2, User_list):
 run_appliance_iterate = appliance_iterate(df2, User_list)
 
 i = 0
-print("Dette er tid: ", run_appliance_iterate[2])
 for object_appliance in run_appliance_iterate[1]:
 
     user_check = next((u for u in User_list if u.user_name == object_appliance), None)
@@ -115,10 +114,6 @@ for object_appliance in run_appliance_iterate[1]:
     window_time_to = run_appliance_iterate[2][i][1]
     window_time_r_t = run_appliance_iterate[2][i][2]
 
-
-
-    print("Dette er bare navn:" , cell_b_value3, cell_c_value3, cell_d_value3, cell_e_value3,cell_f_value3,cell_g_value3,cell_h_value3)
-    #PC_CL = CL.Appliance(CL,5,60,1,3*60,0.1,5,occasional_use =  0.5)
     cell_b_value3 = user_check.Appliance(user_check, cell_c_value3, cell_d_value3, cell_e_value3,cell_f_value3,cell_g_value3,cell_h_value3)
     cell_b_value3.windows([window_time_from, window_time_to], r_w=window_time_r_t)
 
