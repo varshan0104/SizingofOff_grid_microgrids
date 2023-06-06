@@ -64,10 +64,10 @@ def load_profile():
     #define how many days a load profile for each input file will have
 
     num_models_list_dict = {}
-    num_models_list_dict["1"] = 90
-    num_models_list_dict["2"] = 91
-    num_models_list_dict["3"] = 92
-    num_models_list_dict["4"] = 92
+    num_models_list_dict["1"] = 2#90
+    num_models_list_dict["2"] = 2#91
+    num_models_list_dict["3"] = 2#92
+    num_models_list_dict["4"] = 2#92
 
     tot_number_of_days = 0
 
