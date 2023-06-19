@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #imports all functions from importproductdata.py
-from importproductdata import *
+from importproductdata import read_pv_data, read_battery_data, read_location_data
 from Load_Profile.ramp.ramp_run_adjusted import load_profile
 
 
