@@ -5,7 +5,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib
-matplotlib.use('TkAgg')
+#matplotlib.use('TkAgg') #Forplotting in pycharm due to threading 
 import matplotlib.pyplot as plt
 
 #from Anja:
