@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 from importproductdata import read_pv_data, read_battery_data, read_location_data
 from Load_Profile.ramp.ramp_run_adjusted import load_profile
 
-
 PVData = read_pv_data('productdata.xlsx')
 BatteryData = read_battery_data('productdata.xlsx')
 LocationData = read_location_data('Locationandload_data.xlsx')
@@ -44,7 +43,6 @@ print("Dette er batteri :")
 print(BatteryData)
 print("Dette er lokasjonsdata:")
 print(LocationData)
-
 
 from analysis import *
 
