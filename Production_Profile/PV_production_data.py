@@ -2,7 +2,7 @@
 """
 Created on Tue Jun 13 18:51:56 2023
 
-@author: Varshan
+@author: Varshan  Erik Shankar
 """
 
 import pvlib
@@ -11,16 +11,20 @@ from pvlib.iotools import get_pvgis_tmy
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from importproductdata import read_pv_data, read_location_data
+PVData = read_pv_data('productdata.xlsx')
+LocationData = read_location_data('Locationandload_data.xlsx')
+
 '''Location data for Eco Moyo '''
-latitude = -3.508264023015413
-longitude = 39.84054566015608
-tz = 'Africa/Nairobi'
-altitude = 58 
+latitude = LocationData.latitude
+longitude = LocationData.longitude
+tz = LocationData.tz
+altitude = LocationData.altitude 
 name = 'Eco Moyo Education Centre'
 #location = Location(latitude, longitude, tz, altitude)
 
 ''' Data for PV-panel (GCL-M8/72H) from data sheet '''
-p_max = 1000                        #[W]
+p_max = 1200                    #[W]
 v_oc = 49.84                       #[V]
 i_sc = 11.34                       #[A]
 alpha_sc = 0.0006 * i_sc

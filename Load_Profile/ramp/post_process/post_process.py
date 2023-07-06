@@ -62,7 +62,7 @@ def Profile_series_plot(stoch_profiles_series):
     # plt.ylim(ymax=5000)
     plt.margins(x=0)
     plt.margins(y=0)
-
+    plt.savefig("loadprofile.pdf", format="pdf", bbox_inches="tight")
     plt.show()
 
 # Export Profiles

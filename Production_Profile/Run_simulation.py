@@ -3,7 +3,7 @@
 """
 Created on Sun Nov 20 17:01:22 2022
 
-@author: rikkedihle
+@author: Varshan Erik Shankar
 """
 
 import pandas as pd
@@ -43,11 +43,10 @@ pv_1kW = pv_1kW.resample('15min').interpolate(method='linear')
 pv_1kW = pv_1kW.loc[:].div(1000)
 
 
-'''---Technical parameters from existing system at Eco Moyo---'''
+
 
 pv_size = (7 * 450)/1000                                   #kW
 #pv_size = 7
-#Hva betyr alle disse?
 param_tech = {'BatteryCapacity': 4*200*12/1000,            #kWh
               'BatteryEfficiency': .9,
               'InverterEfficiency': .93,
