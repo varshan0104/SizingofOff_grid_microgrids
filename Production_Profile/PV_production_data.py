@@ -76,3 +76,5 @@ result_dc.plot(figsize = (16,9))
 plt.ylabel('DC output [W]')
 plt.savefig("DCOutput.pdf", format="pdf", bbox_inches="tight")
 plt.show()
+
+
