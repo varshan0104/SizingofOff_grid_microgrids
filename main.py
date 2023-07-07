@@ -1,4 +1,5 @@
 """
+
 Part of masterthesis; Optimal sizing of offgrid microgrids.
 @author: Varshan Erik Shankar
 
@@ -15,12 +16,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #imports all functions from importproductdata.py
-from importproductdata import read_pv_data, read_battery_data, read_location_data
+#from importproductdata import read_pv_data, read_battery_data, read_location_data
 from Load_Profile.ramp.ramp_run_adjusted import load_profile
 
-PVData = read_pv_data('productdata.xlsx')
-BatteryData = read_battery_data('productdata.xlsx')
-LocationData = read_location_data('Locationandload_data.xlsx')
+#PVData = read_pv_data('productdata.xlsx')
+#BatteryData = read_battery_data('productdata.xlsx')
+#LocationData = read_location_data('Locationandload_data.xlsx')
 
 import os
 
@@ -36,13 +37,6 @@ if threading.current_thread() is threading.main_thread():
 else:
     print("This is not the main thread.")
 
-print("Dette er PV:")
-print(PVData)
-print(PVData[1]['PV2'][4])
-print("Dette er batteri :")
-print(BatteryData)
-print("Dette er lokasjonsdata:")
-print(LocationData)
 
 from analysis import *
 

@@ -26,8 +26,8 @@ import sys,os
 sys.path.append(r'C:\Users\varsh\PycharmProjects\SizingOffGridMicrogrids\Load_Profile')
 
 
-from Load_Profile.ramp.core.stochastic_process import Stochastic_Process
-from Load_Profile.ramp.post_process import post_process as pp
+from ramp.core.stochastic_process import Stochastic_Process
+from ramp.post_process import post_process as pp
 import numpy as np
 import pandas as pd
 
