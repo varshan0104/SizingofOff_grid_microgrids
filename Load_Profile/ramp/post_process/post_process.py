@@ -51,7 +51,7 @@ def Profile_cloud_plot(stoch_profiles,stoch_profiles_avg):
 
 def Profile_series_plot(stoch_profiles_series):
 
-    #Plots in NTNU color code (blue)
+
     plt.figure(figsize=(10, 5))
     plt.style.use('seaborn-whitegrid')
     plt.plot(np.arange(len(stoch_profiles_series)), stoch_profiles_series, '#00509e')
