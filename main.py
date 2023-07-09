@@ -8,9 +8,6 @@ GridVille NTNU
 """
 
 #All relevant packages
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
 from Load_Profile.ramp.load_profile_run import load_profile
 from Production_Profile.PV_production_data import PV_production_data
 
@@ -37,18 +34,20 @@ else:
 
 #Make sure the "Appliances_and_users" excel file is filled out. 
 #File location: C:\Users\...\SizingofOff_grid_microgrids\Load_Profile\ramp\input_files
-load_profile()
+#load_profile()
 
 
+#Make sure the Excel files are. 
 PV_production_data()
 
+'''
 file_path = 'Production_Profile/Run_simulation.py'
 with open(file_path, 'r') as file:
     code = file.read()
 exec(code)
 
 
-'''
+
 from analysis import *
 
 # read in the input data

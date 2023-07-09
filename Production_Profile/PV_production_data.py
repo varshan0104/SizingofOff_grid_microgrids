@@ -50,9 +50,15 @@ def read_location_data(file_path):
     return location
 
 
+
 def PV_production_data(): 
     PVData = read_pv_data('productdata.xlsx')
+    import os
+    imported_file_path = os.path.abspath('productdata.xlsx')
+    print("Excel-filen ble importert fra:", imported_file_path)
     LocationData = read_location_data('Locationandload_data.xlsx')
+    
+    print("Hore")
     
     latitude = LocationData.latitude
     longitude = LocationData.longitude
