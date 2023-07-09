@@ -12,6 +12,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from Load_Profile.ramp.load_profile_run import load_profile
+from Production_Profile.PV_production_data import PV_production_data
+
 
 """
 Shows the directory this code is runned from, to make sure you are using the right one. 
@@ -32,12 +34,18 @@ else:
     print("This is not the main thread.")
     
 
-#Function for calculating load profile, everything else happens in the folder: Load Profile
-#Make sure the Appliances_and_users excel file is filled out. 
-#File location: C:\Users\...\SizingofOff_grid_microgrids\Load_Profile\ramp\input_files
 
+#Make sure the "Appliances_and_users" excel file is filled out. 
+#File location: C:\Users\...\SizingofOff_grid_microgrids\Load_Profile\ramp\input_files
 load_profile()
 
+
+PV_production_data()
+
+file_path = 'Production_Profile/Run_simulation.py'
+with open(file_path, 'r') as file:
+    code = file.read()
+exec(code)
 
 
 '''

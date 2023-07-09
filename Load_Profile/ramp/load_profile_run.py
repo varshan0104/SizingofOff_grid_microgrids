@@ -34,41 +34,20 @@ import pandas as pd
 # Define which input files should be considered and run.
 # Files are specified as numbers in a list (e.g. [1,2] will consider input_file_1.py and input_file_2.py)
 
-"""-----Comment related to master thesis:---------"""
-"""
-This file is an adjusted version of ramp_run.py. It aggregates all daily loadprofiles into one loadprofile with the 
-total amount of days that are constructed for the given input files. 
 
-To construct a whole year with its defined variations, 11 input files have been established.
-Each input denotes a season, and can be found in the folder: RAMP-master-->ramp-->input_files
-The object for all buildings at the property are included in these input files to capture the power consumption of the 
-whole school. These can be commented in/out of the code, depending on which combination of buildings is desired.
-
-The objects related to each building/area can be found in RAMP_code/Objects related to buildings
-
-The resulting minute-based load profiles are saved under results. The aggregated load profile is saved in
-results/output_file_aggregated.csv 
-
-The list called input_files_to_run is used to defined which input files that load profiles will be created for,
-which will be summarised to one complete load profile. 
-
-The following values input_files_to_run will establish a complete load profile for input file 1 to 11. 
-The aggregated load profile will summarize the days in the same order as defined in this list (i.e. pay attention
-to the order that the input files are defined in).
-"""
 def load_profile():
 
-    input_files_to_run = [5]
+    input_files_to_run = [1,2,3,4]
 
 
     #define how many days a load profile for each input file will have
 
     num_models_list_dict = {}
-    #num_models_list_dict["1"] = 90
-    #num_models_list_dict["2"] = 91
-    #num_models_list_dict["3"] = 92
-    #num_models_list_dict["4"] = 92
-    num_models_list_dict["5"] = 365
+    num_models_list_dict["1"] = 90
+    num_models_list_dict["2"] = 91
+    num_models_list_dict["3"] = 92
+    num_models_list_dict["4"] = 92
+    
 
     tot_number_of_days = 0
 
@@ -87,7 +66,8 @@ def load_profile():
         #from master research: give the number of models/days for each input file to the stochastic process
         num_models = num_models_list_dict[str(j)]
         Profiles_list = Stochastic_Process(j,num_models)
-
+    
+    
     #from master research: add the established load profile to the array with the yearly profile
     for iii in Profiles_list:
         tot_year = np.append(tot_year, iii)
@@ -97,6 +77,8 @@ def load_profile():
 
         #save data for each input file in csv-files in the results-folder
         pp.export_series(Profiles_series,j)
+        
+        print("Please Wait")
 
     #save the aggregated load profile in a csv-file results/output_file_aggregated.csv
     pp.export_series_year(tot_year)

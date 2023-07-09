@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 
 #%% Import required libraries
-
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib
-#matplotlib.use('TkAgg') #Forplotting in pycharm due to threading 
-import matplotlib.pyplot as plt
 
 #from Anja:
 
@@ -51,18 +48,18 @@ def Profile_cloud_plot(stoch_profiles,stoch_profiles_avg):
 
 def Profile_series_plot(stoch_profiles_series):
 
-
+    
     plt.figure(figsize=(10, 5))
     plt.style.use('seaborn-whitegrid')
     plt.plot(np.arange(len(stoch_profiles_series)), stoch_profiles_series, '#00509e')
 
     plt.xlabel('Time [minutes]')
     plt.ylabel('Power consumption [W]')
-    plt.ylim(ymin=0, ymax=2000)
-    # plt.ylim(ymax=5000)
+    plt.ylim(ymin=0, ymax=np.max(stoch_profiles_series))
+    plt.ylim(ymax=np.max(stoch_profiles_series))
     plt.margins(x=0)
     plt.margins(y=0)
-    plt.savefig("loadprofile.pdf", format="pdf", bbox_inches="tight")
+
     plt.show()
 
 # Export Profiles
