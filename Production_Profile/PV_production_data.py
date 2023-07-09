@@ -12,25 +12,22 @@ import matplotlib.pyplot as plt
 import pytz
 from pvlib.location import Location
 
-#from importproductdata import read_pv_data, read_location_data
-#PVData = read_pv_data('productdata.xlsx')
-#LocationData = read_location_data('Locationandload_data.xlsx')
-
 def read_pv_data(file_path):
-    # Load the Excel file
-    df = pd.read_excel(file_path,sheet_name='PV')
+    df = pd.read_excel(file_path, sheet_name='PV')
+    p_max = df.loc[0,'P_max']                    #[W]
+    v_oc = df.loc[0,'v_oc']                       #[V]
+    i_sc = df.loc[0,'i_sc']                       #[A]
+    alpha_sc = df.loc[0,'alpha_sc']
+    beta_voc = df.loc[0,'beta_voc']
+    gamma_pmp = df.loc[0,'gamma_pmp']
+    temp_ref = df.loc[0,'temp_ref']
+    surface_tilt = df.loc[0,'surface_tilt']                
+    surface_azimuth = df.loc[0,'surface_azimuth']
+    
+    data_dict=[p_max,v_oc,i_sc,alpha_sc,beta_voc,gamma_pmp,temp_ref,surface_tilt,surface_azimuth]
+    
+    return data_dict
 
-    # Convert the first column to a list of variable names and the second column to a list of values
-    variable_names = df.iloc[:, 0].tolist()
-    values = df.iloc[:, 1].tolist()
-
-    # Create variables dynamically and assign their corresponding values
-    pv_variables = {}
-    for name, value in zip(variable_names, values):
-        pv_variables[name] = value
-
-    # Return the variables
-    return pv_variables
 
 def read_location_data(file_path):
     df = pd.read_excel(file_path, sheet_name='Location')
@@ -49,16 +46,9 @@ def read_location_data(file_path):
 
     return location
 
-
-
 def PV_production_data(): 
     PVData = read_pv_data('productdata.xlsx')
-    import os
-    imported_file_path = os.path.abspath('productdata.xlsx')
-    print("Excel-filen ble importert fra:", imported_file_path)
     LocationData = read_location_data('Locationandload_data.xlsx')
-    
-    print("Hore")
     
     latitude = LocationData.latitude
     longitude = LocationData.longitude
@@ -67,15 +57,15 @@ def PV_production_data():
     name = 'GridVille Customer'
     #location = Location(latitude, longitude, tz, altitude)
     
-    p_max = PVData['P_max']                    #[W]
-    v_oc = PVData['v_oc']                       #[V]
-    i_sc = PVData['i_sc']                       #[A]
-    alpha_sc = PVData['alpha_sc']
-    beta_voc = PVData['beta_voc']
-    gamma_pmp = PVData['gamma_pmp']
-    temp_ref = PVData['temp_ref']
-    surface_tilt = PVData['surface_tilt']                
-    surface_azimuth = PVData['surface_azimuth']             
+    p_max = PVData[0]                    #[W]
+    v_oc = PVData[1]                       #[V]
+    i_sc = PVData[2]                       #[A]
+    alpha_sc = PVData[3]
+    beta_voc = PVData[4]
+    gamma_pmp = PVData[5]
+    temp_ref = PVData[6]
+    surface_tilt = PVData[7]                
+    surface_azimuth = PVData[8]             
     
     
     start = '2023-01-01 00:00:00'
@@ -114,7 +104,7 @@ def PV_production_data():
     result_dc.plot(figsize = (16,9))
     #plt.title('DC Power output per module')
     plt.ylabel('DC output [W]')
-    plt.savefig("DCOutput.pdf", format="pdf", bbox_inches="tight")
+    plt.savefig("results\DCOutput.pdf", format="pdf", bbox_inches="tight")
     plt.show()
-
-
+    
+PV_production_data()

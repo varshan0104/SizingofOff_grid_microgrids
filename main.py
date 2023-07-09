@@ -40,14 +40,14 @@ else:
 #Make sure the Excel files are. 
 PV_production_data()
 
-'''
+
 file_path = 'Production_Profile/Run_simulation.py'
 with open(file_path, 'r') as file:
     code = file.read()
 exec(code)
 
 
-
+'''
 from analysis import *
 
 # read in the input data

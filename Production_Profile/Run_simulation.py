@@ -5,13 +5,13 @@ import matplotlib.dates as mdates
 import scipy.optimize as optimize
 
 # Load the demand data
-demand = pd.read_csv(r'Load_Profile\ramp\results\output_file_ecomoyu.csv', index_col=0, header=None, parse_dates=True, squeeze=True, nrows=525541)
+demand = pd.read_csv(r'Load_Profile\ramp\results\output_file_aggregated.csv', index_col=0, header=None, parse_dates=True, squeeze=True, nrows=525541)
 demand.index = pd.date_range(start='2023-01-01 00:00', end='2023-12-31 23:00', freq='min')
 demand = demand.resample('15min').interpolate(method='linear')
 demand = demand.loc[:].div(1000)  # Convert from Wh to kWh
 
 # Load the PV production data
-pv_1kW = pd.read_csv('Production_Profile\pvlib_result.csv', index_col=0, header=None, parse_dates=True, skiprows=1).squeeze("columns")
+pv_1kW = pd.read_csv('pvlib_result.csv', index_col=0, header=None, parse_dates=True, skiprows=1).squeeze("columns")
 pv_1kW = pv_1kW.resample('15min').interpolate(method='linear')
 pv_1kW = pv_1kW.loc[:].div(1000)  # Normalize to 1 kW
 
@@ -233,7 +233,7 @@ def iteratively_reduce_batteries():
                 discharge = min(-net_power, soc - num_batteries_reduced * param_tech['BatteryCapacity'] * 0.3)
                 soc -= discharge * param_tech['BatteryEfficiency']
                 discharge_list[t] = discharge
-
+                
                 # If the batteries can't cover the deficit, add it to the unmet demand
                 if -net_power > discharge:
                     unmet_demand += -net_power - discharge
