@@ -8,7 +8,7 @@ GridVille NTNU
 """
 
 #All relevant packages
-from Load_Profile.ramp.load_profile_run import load_profile
+#from Load_Profile.ramp.load_profile_run import load_profile
 from Production_Profile.PV_production_data import PV_production_data
 
 

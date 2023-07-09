@@ -5,7 +5,7 @@ import matplotlib.dates as mdates
 import scipy.optimize as optimize
 
 # Load the demand data
-demand = pd.read_csv(r'Load_Profile\ramp\results\output_file_aggregated.csv', index_col=0, header=None, parse_dates=True, squeeze=True, nrows=525541)
+demand = pd.read_csv(r'Load_Profile\ramp\results\output_file_ecomoyo.csv', index_col=0, header=None, parse_dates=True, squeeze=True, nrows=525541)
 demand.index = pd.date_range(start='2023-01-01 00:00', end='2023-12-31 23:00', freq='min')
 demand = demand.resample('15min').interpolate(method='linear')
 demand = demand.loc[:].div(1000)  # Convert from Wh to kWh
@@ -36,11 +36,11 @@ num_pv = int(np.ceil(total_demand / total_pv_output))
 # Calculate the maximum energy demand for a day
 max_daily_demand = demand.resample('D').sum().max()
 
-# Calculate the energy capacity of a battery, considering degradation
-battery_capacity = param_tech['BatteryCapacity'] * (1 - param_tech['BatteryDegradation']) * param_tech['BatteryEfficiency'] * 0.8
+# Calculate the usable energy capacity of a battery, considering degradation and minimum SoC
+usable_battery_capacity = param_tech['BatteryCapacity'] * (1 - param_tech['BatteryDegradation']) * param_tech['BatteryEfficiency'] * 0.8 * 0.7
 
-# Calculate the number of batteries needed
-num_batteries = int(np.ceil(max_daily_demand / battery_capacity))
+# Calculate the number of batteries needed considering the usable capacity
+num_batteries = int(np.ceil(max_daily_demand / usable_battery_capacity))
 
 # Calculate the total PV production for each time step
 total_pv_production = num_pv * pv_1kW
@@ -109,82 +109,7 @@ fig.text(0.5, -0.05, pv_batteries_info, ha='center', va='center', fontsize=12, f
 plt.show()
 
 
-# Optimize the number of PV panels and batteries to minimize total curtailed energy
-def optimize_and_curtail(x):
-    num_pv, num_batteries = x
-    num_pv = int(num_pv)
-    num_batteries = int(num_batteries)
 
-    # Calculate the total PV production for each time step
-    total_pv_production = num_pv * pv_1kW
-
-    # Initialize the state of charge of the batteries
-    soc = num_batteries * param_tech['BatteryCapacity']
-
-    # Initialize curtailed energy
-    curtailed_energy = []
-
-    # For each time step...
-    for t in range(len(demand)):
-        # Calculate the net power (production minus demand)
-        net_power = total_pv_production.iloc[t] - demand.iloc[t]
-
-        # If there is a surplus of power...
-        if net_power > 0:
-            # Charge the batteries, but don't exceed their total capacity
-            charge = min(net_power, (num_batteries * param_tech['BatteryCapacity'] - soc) / param_tech['BatteryEfficiency'])
-            soc += charge * param_tech['BatteryEfficiency']
-            curtailed_energy.append(net_power - charge)
-        # If there is a deficit of power...
-        else:
-            # Discharge the batteries, but don't go below the minimum state of charge
-            discharge = min(-net_power, soc - num_batteries * param_tech['BatteryCapacity'] * 0.3)
-            soc -= discharge * param_tech['BatteryEfficiency']
-            curtailed_energy.append(0)
-    
-    return curtailed_energy
-
-
-x0 = [num_pv, num_batteries]  # Initial guess
-bounds = [(1, 100), (1, 100)]  # Bounds for the number of PV panels and batteries
-result = optimize.minimize(lambda x: sum(optimize_and_curtail(x)), x0, bounds=bounds, method='TNC')
-
-opt_num_pv, opt_num_batteries = map(int, result.x)
-opt_curtailed_energy = optimize_and_curtail(result.x)
-
-total_curtailed_energy = sum(opt_curtailed_energy)
-
-# Create a figure with two subplots, specify the figure size
-fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10,8))
-
-# Set an overall title for the figure, make it bold and larger
-fig.suptitle('Optimization Results', weight='bold', fontsize=14)
-
-# Plot the production and demand on the first subplot
-ax[0].plot(demand.index, demand.values, label='Demand', alpha=0.5)
-ax[0].plot(total_pv_production.index, total_pv_production.values, label='Production', alpha=0.5)
-ax[0].legend(loc='best') # 'best' for automatic placement that doesn't overlap the plot
-ax[0].set_ylabel('Power (kW)')
-
-# Plot the curtailed energy on the second subplot
-ax[1].plot(demand.index, opt_curtailed_energy, label='Curtailed Energy', alpha=0.5)
-ax[1].legend(loc='best') # 'best' for automatic placement that doesn't overlap the plot
-ax[1].set_ylabel('Power (kW)')
-ax[1].set_xlabel('Time')
-
-# Format the x-axis to show months and rotate labels
-months = mdates.MonthLocator()  # every month
-months_fmt = mdates.DateFormatter('%B')
-ax[1].xaxis.set_major_locator(months)
-ax[1].xaxis.set_major_formatter(months_fmt)
-plt.xticks(rotation='vertical')
-
-# Add text with the optimal number of PV panels, batteries, and curtailed energy
-opt_info = f'Optimal number of PV panels: {opt_num_pv}\nOptimal number of batteries: {opt_num_batteries}\nTotal curtailed energy ila året: {total_curtailed_energy}kW\n'
-fig.text(0.5, -0.05, opt_info, ha='center', va='center', fontsize=12, fontname='Times New Roman')
-
-# Show the figure
-plt.show()
 
 
 
@@ -311,3 +236,91 @@ plt.xlabel('Number of batteries')
 plt.ylabel('Percentage of unmet demand (%)')
 plt.title('Demand coverage for different numbers of batteries')
 plt.show()
+
+def iteratively_change_pv_and_batteries(num_pv_initial, num_batteries_initial):
+    global param_tech, pv_1kW, demand
+
+    # Set the range of PV panels and batteries to consider
+    min_pv = max(1, num_pv_initial - 7)
+    max_pv = num_pv_initial + 3
+    min_batteries = max(1, num_batteries_initial - 7)
+    max_batteries = num_batteries_initial + 3
+
+    # Initialize the matrix to store the results
+    matrix = np.zeros((max_pv - min_pv + 1, max_batteries - min_batteries + 1))
+
+    # Iterate over each number of PV panels
+    for num_pv in range(min_pv, max_pv + 1):
+        # Iterate over each number of batteries
+        print("Please wait")
+        for num_batteries in range(min_batteries, max_batteries + 1):
+            # Initialize the state of charge of the batteries
+            soc = num_batteries * param_tech['BatteryCapacity']
+
+            # Initialize variables for tracking the total demand and the amount of unmet demand
+            total_demand = 0
+            unmet_demand = 0
+
+            # Calculate the total PV production for each time step
+            total_pv_production = num_pv * pv_1kW
+
+            # Iterate over each time step
+            for t in range(len(demand)):
+                # Calculate the net power (production minus demand)
+                net_power = total_pv_production.iloc[t] - demand.iloc[t]
+
+                # Add the demand for this time step to the total demand
+                total_demand += demand.iloc[t]
+
+                # If there is a surplus of power...
+                if net_power > 0:
+                    # Charge the batteries, but don't exceed their total capacity
+                    charge = min(net_power, (num_batteries * param_tech['BatteryCapacity'] - soc) / param_tech['BatteryEfficiency'])
+                    soc += charge * param_tech['BatteryEfficiency']
+                # If there is a deficit of power...
+                else:
+                    # Discharge the batteries, but don't go below the minimum state of charge
+                    discharge = min(-net_power, soc - num_batteries * param_tech['BatteryCapacity'] * 0.3)
+                    soc -= discharge * param_tech['BatteryEfficiency']
+                    
+                    # If the batteries can't cover the deficit, add it to the unmet demand
+                    if -net_power > discharge:
+                        unmet_demand += -net_power - discharge
+
+            # Calculate the percentage of unmet demand
+            percentage_unmet = (unmet_demand / total_demand) * 100
+
+            # Store the percentage of unmet demand in the matrix
+            matrix[num_pv - min_pv, num_batteries - min_batteries] = percentage_unmet
+
+    return matrix
+
+# Define the initial number of PV panels and batteries
+num_pv_initial = num_pv# Define your initial number of PV panels here
+num_batteries_initial = num_batteries# Define your initial number of batteries here
+
+# Run the simulation
+matrix = iteratively_change_pv_and_batteries(num_pv_initial, num_batteries_initial)
+
+min_pv = max(1, num_pv_initial - 7)
+max_pv = num_pv_initial + 7
+min_batteries = max(1, num_batteries_initial - 7)
+max_batteries = num_batteries_initial + 7
+
+# Plot the matrix
+plt.figure(figsize=(10, 10))
+plt.imshow(matrix, cmap='RdYlGn_r', origin='lower')
+plt.colorbar(label='Unmet demand (%)')
+plt.xticks(range(max_batteries - min_batteries + 1), range(min_batteries, max_batteries + 1))
+plt.yticks(range(max_pv - min_pv + 1), range(min_pv, max_pv + 1))
+plt.xlabel('Number of batteries')
+plt.ylabel('Number of PV panels')
+plt.title('Unmet demand for different numbers of PV panels and batteries')
+
+# Add the percentage of unmet demand in each cell
+for i in range(matrix.shape[0]):
+    for j in range(matrix.shape[1]):
+        plt.text(j, i, f'{matrix[i, j]:.1f}', ha='center', va='center', color='black' if matrix[i, j] > 50 else 'white')
+
+plt.show()
+
