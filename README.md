@@ -54,7 +54,7 @@ There's a section of the code that's commented out, which seems to involve analy
 The codebase was developed by Varshan Erik Shankar as part of his master's thesis.
 
 
-## Additional Modules
+## Import Module
 
 In addition to the main script, the project also includes a module for importing product data. This module, `importproductdata.py`, contains the following functions:
 
@@ -72,6 +72,15 @@ To run `importproductdata.py`, you'll need the following Python packages:
 import pandas as pd
 import pytz
 from pvlib.location import Location
+```
+## Data Files
+
+The `importproductdata.py` module expects Excel files with specific sheet names and formats. For each function, the Excel file should have:
+
+- `read_pv_data(file_path)`: A sheet named 'PV' with columns for each PV panel and a row for each parameter.
+- `read_battery_data(file_path)`: A sheet named 'Battery' with columns for each battery type and a row for each parameter.
+- `read_location_data(file_path)`: A sheet named 'Location' with columns 'latitude', 'longitude', 'timezone', and 'altitude'.
+
 
 ## Load Profile Generation
 
@@ -95,6 +104,15 @@ import sys
 import os
 import numpy as np
 import pandas as pd
+```
+## Function
+
+The main function in this module is `load_profile()`, which generates a total number of specified days' load profiles, post-processes the results, generates plots, and saves the data in CSV files in the results folder.
+
+The function considers several input files, which are Python scripts defined as numbers in a list. The number of days a load profile for each input file will have is defined in a dictionary. The function then calls the stochastic process and saves the results in a list of stochastic profiles.
+
+The `load_profile()` function also depends on two other modules: `stochastic_process` and `post_process`. Make sure these modules are accessible and correctly functioning.
+
 
 ## Input Data Handling
 
@@ -107,6 +125,19 @@ To run `input_file_1.py`, you'll need the following Python packages:
 ```python
 import pandas as pd
 from ramp.core.core import User, np
+```
+## Functionality
+
+The module contains the function `appliance_iterate(df2, User_list)`, which iterates over the rows of the 'Appliances_Spring' sheet in the Excel file, creating a list of user-appliance data. The function returns three lists: one for appliance data, one for user data, and one for time window data.
+
+The module also creates a User object for each user, stored in User_list. Each User object also has an Appliance object, representing the appliances the user uses.
+
+## Data Files
+
+The `input_file_1.py` module expects an Excel file with the name `Appliances_and_users.xlsx`, which should contain two sheets: 'User' and 'Appliances_Spring'.
+
+The 'User' sheet should have columns 'user', 'n_users', and 'us_pref'. The 'Appliances_Spring' sheet should have the columns 'user', 'appliance_name', 'number', 'P', 'num_windows', 'func_time', 'r_t', 'func_cycle', 'fixed', 'fixed_cycle', 'occasional_use', 'flat', 'thermal_P_var', 'pref_index', 'wd_we_type', 'year_min', 'initial_share', 'From_time', 'To_time', 'r_w'.
+
 
 ## PV Production Data Handling
 
@@ -123,6 +154,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import pytz
 from pvlib.location import Location
+```
+
+## Functionality
+
+The main function in this module is `PV_production_data()`, which reads PV data from an Excel file `productdata.xlsx` and location data from another Excel file `Locationandload_data.xlsx` using the `read_pv_data(file_path)` and `read_location_data(file_path)` functions respectively.
+
+The function then obtains meteorological data from the PVGIS database for the given location, processes this data into the format required by pvlib, calculates the module temperature using the Faiman model, and calculates the DC output of the PV system using the PVWatts model.
+
+The final DC output data is saved in a CSV file `pvlib_result.csv`, and a plot of the DC output is created and saved as a PDF file `results/DCOutput.pdf`.
+
+## Data Files
+
+The `PV_production_data.py` module expects two Excel files:
+
+- `productdata.xlsx` which should have a sheet named 'PV' with the following columns: 'P_max', 'v_oc', 'i_sc', 'alpha_sc', 'beta_voc', 'gamma_pmp', 'temp_ref', 'surface_tilt', 'surface_azimuth'.
+- `Locationandload_data.xlsx` which should have a sheet named 'Location' with the following columns: 'latitude', 'longitude', 'timezone', 'altitude'.
+
+
 
 ## Simulation Run
 
@@ -138,3 +187,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import scipy.optimize as optimize
+```
+
+## Functionality
+
+The module first reads demand data from `Load_Profile/ramp/results/output_file_ecomoyu.csv` and PV production data from `pvlib_result.csv`. It then calculates the total energy demand and the total energy output from a PV panel for a year.
+
+Based on these values, the module calculates the number of PV panels and batteries needed. It also calculates the battery's state of charge at each time step, as well as the battery charge and discharge.
+
+After these initial calculations, the module runs a simulation that iteratively reduces the number of batteries and calculates the percentage of unmet demand. The results are plotted.
+
+The module also contains a function, `iteratively_change_pv_and_batteries(num_pv_initial, num_batteries_initial)`, which runs a simulation for different numbers of PV panels and batteries and plots the results.
+
+## Data Files
+
+The `Run_simulation.py` module expects two CSV files:
+
+- `Load_Profile/ramp/results/output_file_ecomoyu.csv` which should contain the load profile.
+- `pvlib_result.csv` which should contain the PV production data.
