@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jun 13 18:51:56 2023
+Part of masterthesis; Off-Grid Microgrid Design Consideration for Rural Electrification.
+Please read the README file before running the code. Make sure to download all the necessary packages.
 
-@author: Varshan  Erik Shankar
+Author: Varshan Erik Shankar
+GridVille NTNU
 """
 
 import pvlib

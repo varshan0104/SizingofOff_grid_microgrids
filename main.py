@@ -1,21 +1,21 @@
+# -*- coding: utf-8 -*-
 """
+Part of masterthesis; Off-Grid Microgrid Design Consideration for Rural Electrification.
+Please read the README file before running the code. Make sure to download all the necessary packages.
+It would be beneficial to read the Microgrid Sizing guide provided in a PDF format in the same folder as this file.
 
-Part of masterthesis; Optimal sizing of offgrid microgrids.
-@author: Varshan Erik Shankar
-
+Author: Varshan Erik Shankar
 GridVille NTNU
-
 """
 
-#All relevant packages
-#from Load_Profile.ramp.load_profile_run import load_profile
+# All relevant packages
+from Load_Profile.ramp.load_profile_run import load_profile
 from Production_Profile.PV_production_data import PV_production_data
 
-
 """
-Shows the directory this code is runned from, to make sure you are using the right one. 
-It should be ...SizingOff_grid_microgrids
-Also a check to make sure threading is correct 
+The following code shows the directory from which this code is being executed, to ensure that you are in the correct directory,
+which should be ...SizingOff_grid_microgrids.
+Also, it includes a check to verify the threading is correct.
 """
 
 import os
@@ -23,39 +23,22 @@ import os
 if not os.path.exists('results'):
     os.makedirs('results')
 
-#Check for trading
+# Check for threading
 import threading
 if threading.current_thread() is threading.main_thread():
     print("This is the main thread.")
 else:
     print("This is not the main thread.")
-    
 
+# Make sure the "Appliances_and_users" excel file is filled out.
+# File location: C:\Users\...\SizingofOff_grid_microgrids\Load_Profile\ramp\input_files
+load_profile()
 
-#Make sure the "Appliances_and_users" excel file is filled out. 
-#File location: C:\Users\...\SizingofOff_grid_microgrids\Load_Profile\ramp\input_files
-#load_profile()
+# Function for Solar Production Profile
+PV_production_data()
 
-
-#Make sure the Excel files are. 
-#PV_production_data()
-
-
+# Run simulation
 file_path = 'Production_Profile/Run_simulation.py'
 with open(file_path, 'r') as file:
     code = file.read()
 exec(code)
-
-
-'''
-from analysis import *
-
-# read in the input data
-technical_data, pv_data = read_pv_data('productdata.xlsx')
-bat_data = read_battery_data('productdata.xlsx')
-location = read_location_data('Locationandload_data.xlsx')
-
-# run the analysis code
-#run_analysis(technical_data, pv_data, bat_data, location)
-
-'''

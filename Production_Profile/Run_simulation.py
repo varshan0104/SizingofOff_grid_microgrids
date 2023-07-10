@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+Part of masterthesis; Off-Grid Microgrid Design Consideration for Rural Electrification.
+Please read the README file before running the code. Make sure to download all the necessary packages.
+
+Author: Varshan Erik Shankar
+GridVille NTNU
+"""
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -5,7 +14,7 @@ import matplotlib.dates as mdates
 import scipy.optimize as optimize
 
 # Load the demand data
-demand = pd.read_csv(r'Load_Profile\ramp\results\output_file_ecomoyu.csv', index_col=0, header=None, parse_dates=True, squeeze=True, nrows=525541)
+demand = pd.read_csv(r'Load_Profile\ramp\results\output_file_aggregated.csv', index_col=0, header=None, parse_dates=True, squeeze=True, nrows=525541)
 demand.index = pd.date_range(start='2023-01-01 00:00', end='2023-12-31 23:00', freq='min')
 demand = demand.resample('15min').interpolate(method='linear')
 demand = demand.loc[:].div(1000)  # Convert from Wh to kWh
@@ -15,13 +24,28 @@ pv_1kW = pd.read_csv('pvlib_result.csv', index_col=0, header=None, parse_dates=T
 pv_1kW = pv_1kW.resample('15min').interpolate(method='linear')
 pv_1kW = pv_1kW.loc[:].div(1000)  # Normalize to 1 kW
 
+def read_battery_data(file_path):
+    df = pd.read_excel(file_path, sheet_name='Battery')
+    BatteryCapacity = df.loc[0,'BatteryCapacity']                    #[W]
+    BatteryEfficiency = df.loc[0,'BatteryEfficiency']                       #[V]
+    InverterEfficiency = df.loc[0,'InverterEfficiency']                       #[A]
+    timestep = df.loc[0,'timestep']
+    MaxPower = df.loc[0,'MaxPower']
+    BatteryDegradation = df.loc[0,'BatteryDegradation']
+    
+    data_dict=[BatteryCapacity,BatteryEfficiency,InverterEfficiency,timestep,MaxPower,BatteryDegradation]
+    
+    return data_dict
+
+BatData = read_battery_data('productdata.xlsx')
+
 # Define the battery parameters
-param_tech = {'BatteryCapacity': 200*12/1000,            #kWh
-              'BatteryEfficiency': .9,
-              'InverterEfficiency': .93,
-              'timestep': .25,
-              'MaxPower': 3500/1000,                       #kWh (maximum output of the inverter)
-              'BatteryDegradation': 0.02                   # Assume 2% capacity loss per year
+param_tech = {'BatteryCapacity': BatData[0],            #kWh
+              'BatteryEfficiency': BatData[1],
+              'InverterEfficiency': BatData[2],
+              'timestep': BatData[3],
+              'MaxPower': BatData[4],                       #kWh (maximum output of the inverter)
+              'BatteryDegradation': BatData[5]                   # Assume 2% capacity loss per year
              }
 
 # Initialize a list to store the state of charge for each time step
@@ -40,7 +64,7 @@ num_pv = int(np.ceil(total_demand / total_pv_output))
 max_daily_demand = demand.resample('D').sum().max()
 
 # Calculate the usable energy capacity of a battery, considering degradation and minimum SoC
-usable_battery_capacity = param_tech['BatteryCapacity'] * (1 - param_tech['BatteryDegradation']) * param_tech['BatteryEfficiency'] * 0.8 * 0.7
+usable_battery_capacity = param_tech['BatteryCapacity'] * (1 - param_tech['BatteryDegradation']) * param_tech['BatteryEfficiency'] * 0.8 * 0.8 # 0.8 for both total capcity that can be utilized and minimum state of charge
 
 # Calculate the number of batteries needed considering the usable capacity
 num_batteries = int(np.ceil(max_daily_demand / usable_battery_capacity))
@@ -170,7 +194,7 @@ def iteratively_reduce_batteries():
             # If there is a deficit of power...
             else:
                 # Discharge the batteries, but don't go below the minimum state of charge
-                discharge = min(-net_power, soc - num_batteries_reduced * param_tech['BatteryCapacity'] * 0.3)
+                discharge = min(-net_power, soc - num_batteries_reduced * param_tech['BatteryCapacity'] * 0.2)
                 soc -= discharge * param_tech['BatteryEfficiency']
                 discharge_list[t] = discharge
                 
@@ -297,7 +321,7 @@ def iteratively_change_pv_and_batteries(num_pv_initial, num_batteries_initial):
                 # If there is a deficit of power...
                 else:
                     # Discharge the batteries, but don't go below the minimum state of charge
-                    discharge = min(-net_power, soc - num_batteries * param_tech['BatteryCapacity'] * 0.3)
+                    discharge = min(-net_power, soc - num_batteries * param_tech['BatteryCapacity'] * 0.2)
                     soc -= discharge * param_tech['BatteryEfficiency']
                     
                     # If the batteries can't cover the deficit, add it to the unmet demand

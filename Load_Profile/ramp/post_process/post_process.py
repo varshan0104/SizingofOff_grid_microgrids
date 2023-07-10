@@ -5,8 +5,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-#from Anja:
-
 import csv
 
 #%% Post-processing
@@ -51,7 +49,7 @@ def Profile_series_plot(stoch_profiles_series):
     
     plt.figure(figsize=(10, 5))
     plt.style.use('seaborn-whitegrid')
-    plt.plot(np.arange(len(stoch_profiles_series)), stoch_profiles_series, '#00509e')
+    plt.plot(np.arange(len(stoch_profiles_series)), stoch_profiles_series, 'orange')
 
     plt.xlabel('Time [minutes]')
     plt.ylabel('Power consumption [W]')
@@ -69,7 +67,7 @@ def export_series(stoch_profiles_series, j):
     series_frame.to_csv('results/output_file_%d.csv' % (j))
 
 
-"""-------From master thesis research: Save the complete (annual) load profile as csv file-------"""
+"""------Save the complete (annual) load profile as csv file-------"""
 def export_series_year(tot_year):
     series_frame = pd.DataFrame(tot_year)
     series_frame.to_csv('results/output_file_aggregated.csv')

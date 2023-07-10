@@ -10,15 +10,7 @@ multi-energy load profiles in off-grid areas, called RAMP, v0.3.0.
 - Sylvain Quoilin, KU Leuven
 - Emanuela Colombo, Politecnico di Milano
 
-Copyright 2019 RAMP, contributors listed above.
-Licensed under the European Union Public Licence (EUPL), Version 1.2;
-you may not use this file except in compliance with the License.
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and limitations
-under the License.
+However the input model is modified by Varshan Erik Shankar as part of a master thesis for GridVille NTNU
 """
 
 #%% Import required modules
@@ -26,8 +18,8 @@ import sys,os
 sys.path.append(r'C:\Users\varsh\PycharmProjects\SizingOffGridMicrogrids\Load_Profile')
 
 
-from stochastic_process import Stochastic_Process
-from post_process import post_process as pp
+from core.stochastic_process import Stochastic_Process
+from core.post_process import post_process as pp
 import numpy as np
 import pandas as pd
 

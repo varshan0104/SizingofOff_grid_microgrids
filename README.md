@@ -47,59 +47,23 @@ The repository contains the following scripts:
     import threading
     ```
 
-3. **Data files**: The project uses data from specific Excel files. Ensure the "Appliances_and_users" Excel file in the directory `Load_Profile/ramp/input_files` is filled out.
-
-### Execution
-
-The code can be run by executing the `main.py` file. 
-
-If everything is set up correctly, it should print "This is the main thread" to the console. If you see the message "This is not the main thread", then the threading is not set up correctly.
-
-The program also creates a `results` directory if it doesn't already exist, where the results of the computation can be stored.
+3. **Data files**: The project uses data from specific Excel files. Ensure the Excel files is filled out.
 
 ### Modules
 
 There are several components to this codebase:
 
-- `load_profile`: This function (currently commented out) is likely responsible for handling load profiles.
-- `PV_production_data`: This function appears to handle photovoltaic production data.
+- `load_profile`: This function is responsible for handling load profiles.
+- `PV_production_data`: This function handles photovoltaic production data.
 - `Run_simulation.py`: The code from this file is being read and executed. Make sure this file exists in the `Production_Profile` directory.
 
 ### Note
 
-There's a section of the code that's commented out, which seems to involve analysis functions. If you plan to use this part of the code, make sure you uncomment it and that all the necessary data files and functions are available.
+There's parameters such as inverter efficiency that are not included in the calulcation as a basis. So make sure to add these IF you want to calculate the simulations using these parameters.
 
 ## Author
 
-The codebase was developed by Varshan Erik Shankar as part of his master's thesis.
-
-
-## Import Module
-
-In addition to the main script, the project also includes a module for importing product data. This module, `importproductdata.py`, contains the following functions:
-
-- `read_pv_data(file_path)`: This function reads data from an Excel file about photovoltaic (PV) panels. It returns a dictionary of technical data and a nested dictionary for each PV panel's data.
-
-- `read_battery_data(file_path)`: This function reads data from an Excel file about batteries. It returns a list of battery data.
-
-- `read_location_data(file_path)`: This function reads location data from an Excel file. It returns a `Location` object (from the `pvlib` library) containing the latitude, longitude, timezone, and altitude of the location.
-
-### Prerequisites
-
-To run `importproductdata.py`, you'll need the following Python packages:
-
-```python
-import pandas as pd
-import pytz
-from pvlib.location import Location
-```
-## Data Files
-
-The `importproductdata.py` module expects Excel files with specific sheet names and formats. For each function, the Excel file should have:
-
-- `read_pv_data(file_path)`: A sheet named 'PV' with columns for each PV panel and a row for each parameter.
-- `read_battery_data(file_path)`: A sheet named 'Battery' with columns for each battery type and a row for each parameter.
-- `read_location_data(file_path)`: A sheet named 'Location' with columns 'latitude', 'longitude', 'timezone', and 'altitude'.
+The codebase was developed by Varshan Erik Shankar as part of a master's thesis called Off-Grid Microgrid Design COnsiderations for Rural Electrification.
 
 
 ## Load Profile Generation
@@ -114,6 +78,10 @@ This module was created by:
 - Sergio Balderrama, Université de Liège
 - Sylvain Quoilin, KU Leuven
 - Emanuela Colombo, Politecnico di Milano
+
+### NOTE!
+
+It have been made several changes to the RAMP code compared to the original. 
 
 ### Prerequisites
 
