@@ -50,7 +50,7 @@ def read_location_data(file_path):
 
 def PV_production_data(): 
     PVData = read_pv_data('productdata.xlsx')
-    LocationData = read_location_data('Locationandload_data.xlsx')
+    LocationData = read_location_data('Location_data.xlsx')
     
     latitude = LocationData.latitude
     longitude = LocationData.longitude
