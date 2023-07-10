@@ -1,20 +1,40 @@
 # Sizing of Off-Grid Microgrids
 
-This repository contains Python scripts for sizing off-grid microgrids. The scripts are organized as follows:
-
-- `main.py`: This is the main script that runs the entire process.
-- `Load_Profile/ramp/load_profile_run.py`: This script is responsible for handling the load profile.
-- `Production_Profile/PV_production_data.py`: This script manages the PV production data.
-- `Production_Profile/Run_simulation.py`: This script runs the simulation for the production profile.
-- `importproductdata.py`: This script is used for importing product data.
+This repository contains Python scripts for sizing off-grid microgrids. This project is part of a master's thesis on the optimal sizing of off-grid microgrids, run under GridVille NTNU.
 
 ## Getting Started
 
-This project is part of a master's thesis on the optimal sizing of off-grid microgrids. It is run under the GridVille NTNU. To get started, clone the repository and install the required Python packages.
-
-## Getting Started
+To get started, clone the repository and install the required Python packages.
 
 Before running the code, ensure that you're in the correct directory. The directory should be `...SizingOff_grid_microgrids`.
+
+## Prerequisites
+
+- Python: The code is written in Python. Make sure you have it installed on your machine.
+
+- Packages: This project requires specific Python packages. The packages required for each script are detailed in their respective sections below. Make sure to install all necessary packages before running the code.
+
+- Data files: The project uses data from specific Excel and CSV files. The files required for each script are detailed in their respective sections below. Make sure these files are correctly formatted and in the correct locations.
+
+## Execution
+
+The code can be run by executing the `main.py` file.
+
+If everything is set up correctly, it should print "This is the main thread" to the console. If you see the message "This is not the main thread", then the threading is not set up correctly.
+
+The program also creates a `results` directory if it doesn't already exist, where the results of the computation can be stored.
+
+## Scripts
+
+The repository contains the following scripts:
+
+1. Main Script
+2. Import Module
+3. Load Profile Generation
+4. Input Data Handling
+5. PV Production Data Handling
+6. Simulation Run
+
 
 ### Prerequisites
 
