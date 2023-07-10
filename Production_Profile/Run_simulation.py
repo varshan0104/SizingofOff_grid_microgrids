@@ -5,7 +5,7 @@ import matplotlib.dates as mdates
 import scipy.optimize as optimize
 
 # Load the demand data
-demand = pd.read_csv(r'Load_Profile\ramp\results\output_file_ecomoyo.csv', index_col=0, header=None, parse_dates=True, squeeze=True, nrows=525541)
+demand = pd.read_csv(r'Load_Profile\ramp\results\output_file_ecomoyu.csv', index_col=0, header=None, parse_dates=True, squeeze=True, nrows=525541)
 demand.index = pd.date_range(start='2023-01-01 00:00', end='2023-12-31 23:00', freq='min')
 demand = demand.resample('15min').interpolate(method='linear')
 demand = demand.loc[:].div(1000)  # Convert from Wh to kWh
@@ -23,6 +23,9 @@ param_tech = {'BatteryCapacity': 200*12/1000,            #kWh
               'MaxPower': 3500/1000,                       #kWh (maximum output of the inverter)
               'BatteryDegradation': 0.02                   # Assume 2% capacity loss per year
              }
+
+# Initialize a list to store the state of charge for each time step
+soc_values = []
 
 # Calculate the total energy demand for a year
 total_demand = demand.sum()
@@ -52,6 +55,8 @@ soc = num_batteries * param_tech['BatteryCapacity']
 battery_charge = []
 battery_discharge = []
 
+# Calculate the maximum state of charge
+max_soc = num_batteries * param_tech['BatteryCapacity']
 
 
 # For each time step...
@@ -68,9 +73,23 @@ for t in range(len(demand)):
     # If there is a deficit of power...
     else:
         # Discharge the batteries, but don't go below the minimum state of charge
-        soc = max(soc + net_power / param_tech['BatteryEfficiency'], num_batteries * param_tech['BatteryCapacity'] * 0.3)
+        soc = max(soc + net_power / param_tech['BatteryEfficiency'], num_batteries * param_tech['BatteryCapacity'] * 0.2)
         battery_charge.append(0)
         battery_discharge.append(-net_power / param_tech['BatteryEfficiency'])
+
+    # If there is a surplus of power...
+    if net_power > 0:
+        # Charge the batteries, but don't exceed their total capacity
+        soc = min(soc + net_power * param_tech['BatteryEfficiency'], num_batteries * param_tech['BatteryCapacity'])
+        soc_values.append(soc / max_soc * 100)
+        
+    # If there is a deficit of power...
+    else:
+        # Discharge the batteries, but don't go below the minimum state of charge
+        soc = max(soc + net_power / param_tech['BatteryEfficiency'], num_batteries * param_tech['BatteryCapacity'] * 0.2)
+        soc_values.append(soc / max_soc * 100)
+
+
 
 # Create a figure with two subplots, specify the figure size
 fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10,8))
@@ -84,12 +103,11 @@ ax[0].plot(total_pv_production.index, total_pv_production.values, label='Product
 ax[0].legend(loc='best') # 'best' for automatic placement that doesn't overlap the plot
 ax[0].set_ylabel('Power (kW)')
 
-# Plot the battery charge and discharge on the second subplot with specified colors
-ax[1].fill_between(total_pv_production.index, battery_discharge, color='red', alpha=0.5, label='Battery discharge')
-ax[1].fill_between(total_pv_production.index, battery_charge, color='green', alpha=0.5, label='Battery charge')
+# Plot the state of charge on the second subplot
+ax[1].plot(total_pv_production.index, soc_values, color='green', alpha=0.5, label='State of Charge (%)')
 ax[1].legend(loc='best') # 'best' for automatic placement that doesn't overlap the plot
-ax[1].set_ylabel('Power (kW)')
-ax[1].set_xlabel('Time')
+ax[1].set_ylabel('State of Charge (%)')
+ax[1].set_xlabel('Months')
 
 # Format the x-axis to show months and rotate labels
 months = mdates.MonthLocator()  # every month
@@ -106,11 +124,8 @@ pv_batteries_info = f'Number of PV panels needed: {num_pv}\nNumber of batteries 
 fig.text(0.5, -0.05, pv_batteries_info, ha='center', va='center', fontsize=12, fontname='Times New Roman')
 
 # Show the figure
+plt.savefig("results/basic_coverage.pdf", format="pdf", bbox_inches="tight")
 plt.show()
-
-
-
-
 
 
 def iteratively_reduce_batteries():
@@ -198,12 +213,13 @@ for num_batteries_reduced, percentage_unmet, charge_list, discharge_list, unmet_
     ax[0].set_ylabel('Power (kW)')
 
     # Plot the battery charge, discharge and unmet demand on the second subplot
-    ax[1].plot(demand.index, charge_list, color='green', label='Battery charge', alpha=0.5)
-    ax[1].plot(demand.index, discharge_list, color='red', label='Battery discharge', alpha=0.5)
-    ax[1].scatter(demand.index, unmet_demand_list, color='blue', label='Unmet Demand', alpha=1.0, zorder=2)
+    #ax[1].plot(demand.index, charge_list, color='green', label='Battery charge', alpha=0.5)
+    #ax[1].plot(demand.index, discharge_list, color='red', label='Battery discharge', alpha=0.5)
+    scatter_color = ['blue' if value > 0 else 'white' for value in unmet_demand_list]
+    ax[1].scatter(demand.index, unmet_demand_list , color=scatter_color, label='Unmet Demand', alpha=1.0, zorder=2)
     ax[1].legend(loc='best')
     ax[1].set_ylabel('Power (kW)')
-    ax[1].set_xlabel('Time')
+    ax[1].set_xlabel('Months')
 
 
     # Format the x-axis to show months and rotate labels
@@ -230,12 +246,13 @@ percentage_unmet_list = [result[1] for result in results]
 # Create a color map where 100% demand coverage is green and 95% demand coverage is red
 colors = ['green' if percentage_unmet == 0 else 'red' for percentage_unmet in percentage_unmet_list]
 
-# Create the bar plot
-plt.bar(num_batteries_list, percentage_unmet_list, color=colors)
-plt.xlabel('Number of batteries')
-plt.ylabel('Percentage of unmet demand (%)')
-plt.title('Demand coverage for different numbers of batteries')
-plt.show()
+# Create a list of the number of batteries and the percentage of unmet demand for each result
+num_batteries_list = [result[0] for result in results]
+percentage_unmet_list = [result[1] for result in results]
+
+# Create a color map where 100% demand coverage is green and 95% demand coverage is red
+colors = ['green' if percentage_unmet == 0 else 'red' for percentage_unmet in percentage_unmet_list]
+
 
 def iteratively_change_pv_and_batteries(num_pv_initial, num_batteries_initial):
     global param_tech, pv_1kW, demand
@@ -303,9 +320,9 @@ num_batteries_initial = num_batteries# Define your initial number of batteries h
 matrix = iteratively_change_pv_and_batteries(num_pv_initial, num_batteries_initial)
 
 min_pv = max(1, num_pv_initial - 7)
-max_pv = num_pv_initial + 7
+max_pv = num_pv_initial + 3
 min_batteries = max(1, num_batteries_initial - 7)
-max_batteries = num_batteries_initial + 7
+max_batteries = num_batteries_initial + 3
 
 # Plot the matrix
 plt.figure(figsize=(10, 10))
@@ -320,7 +337,7 @@ plt.title('Unmet demand for different numbers of PV panels and batteries')
 # Add the percentage of unmet demand in each cell
 for i in range(matrix.shape[0]):
     for j in range(matrix.shape[1]):
-        plt.text(j, i, f'{matrix[i, j]:.1f}', ha='center', va='center', color='black' if matrix[i, j] > 50 else 'white')
+        plt.text(j, i, f'{matrix[i, j]:.1f}', ha='center', va='center', color='black')
 
+plt.savefig("resultmatrix.pdf", format="pdf", bbox_inches="tight")
 plt.show()
-
